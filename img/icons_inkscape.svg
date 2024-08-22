@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="64"
+   height="64"
+   viewBox="0 0 16.933334 16.933334"
+   version="1.1"
+   id="svg1"
+   inkscape:export-filename="replay10"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
+   sodipodi:docname="icons_inkscape.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#999999"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="true"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="10.180159"
+     inkscape:cx="22.200047"
+     inkscape:cy="32.514228"
+     inkscape:window-width="1920"
+     inkscape:window-height="1111"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="g5" />
+  <defs
+     id="defs1" />
+  <g
+     inkscape:label="pause"
+     inkscape:groupmode="layer"
+     id="layer1"
+     style="display:none">
+    <g
+       id="g2">
+      <rect
+         style="font-variation-settings:'wght' 400;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.10017;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:30.3;stroke-dasharray:none;paint-order:stroke fill markers"
+         id="rect1"
+         width="5.8789201"
+         height="16.933332"
+         x="0.59776992"
+         y="4.4504802e-07"
+         ry="0.78200001" />
+      <rect
+         style="font-variation-settings:'wght' 400;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.10017;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:30.3;stroke-dasharray:none;paint-order:stroke fill markers"
+         id="rect2"
+         width="5.8789201"
+         height="16.933332"
+         x="10.456643"
+         y="4.4504802e-07"
+         ry="0.78200001" />
+    </g>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="play"
+     style="display:none">
+    <path
+       id="path3"
+       style="color:#000000;fill:#ffffff;stroke-width:0.962897;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:30.3;-inkscape-stroke:none;paint-order:stroke fill markers"
+       d="M 2.0500041,0.0217041 A 1.4357169,1.4357169 0 0 0 1.5818156,0.19223633 1.4357169,1.4357169 0 0 0 0.86299642,1.4350545 V 15.498796 A 1.4357169,1.4357169 0 0 0 3.0163534,16.741614 L 15.195455,9.7100016 a 1.4357169,1.4357169 0 0 0 0,-2.4861531 L 3.0163534,0.19223633 A 1.4357169,1.4357169 0 0 0 2.0500041,0.0217041 Z" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer3"
+     inkscape:label="forward10"
+     style="display:none">
+    <path
+       id="path3-5"
+       style="color:#000000;display:inline;fill:none;stroke:#ffffff;stroke-width:0.866407;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:30.3;-inkscape-stroke:none;paint-order:stroke fill markers"
+       d="M 2.382751,1.3437631 A 1.3782257,1.2108806 0 0 0 1.933311,1.4875896 1.3782257,1.2108806 0 0 0 1.243276,2.5357799 V 14.39711 A 1.3782257,1.2108806 0 0 0 3.310405,15.4453 L 15.001812,9.5148528 a 1.3782257,1.2108806 0 0 0 0,-2.0968163 L 3.310405,1.4875896 A 1.3782257,1.2108806 0 0 0 2.382751,1.3437631 Z" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:7.57054px;line-height:1.25;font-family:'Segoe UI';-inkscape-font-specification:'Segoe UI, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;letter-spacing:-0.393565px;fill:#ffffff;stroke-width:0.567791"
+       x="1.71576"
+       y="11.130032"
+       id="text4"><tspan
+         sodipodi:role="line"
+         id="tspan4"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:7.57054px;font-family:'Segoe UI';-inkscape-font-specification:'Segoe UI, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;letter-spacing:-0.393565px;fill:#ffffff;stroke-width:0.567791"
+         x="1.71576"
+         y="11.130032">10</tspan></text>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="g5"
+     inkscape:label="replay10"
+     inkscape:highlight-color="#6cf6d1">
+    <path
+       id="path4"
+       style="color:#000000;display:inline;fill:none;stroke:#ffffff;stroke-width:0.866407;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:30.3;-inkscape-stroke:none;paint-order:stroke fill markers"
+       d="m 14.550967,15.59116 a 1.3782257,1.2108806 0 0 0 0.44944,-0.143826 1.3782257,1.2108806 0 0 0 0.690035,-1.048191 V 2.5378131 a 1.3782257,1.2108806 0 0 0 -2.067129,-1.04819 L 1.9319057,7.4200703 a 1.3782257,1.2108806 0 0 0 0,2.0968163 L 13.623313,15.447334 a 1.3782257,1.2108806 0 0 0 0.927654,0.143826 z" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:7.57054px;line-height:1.25;font-family:'Segoe UI';-inkscape-font-specification:'Segoe UI, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;letter-spacing:-0.393565px;fill:#ffffff;stroke-width:0.567791"
+       x="6.47826"
+       y="11.130032"
+       id="text5"><tspan
+         sodipodi:role="line"
+         id="tspan5"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:7.57054px;font-family:'Segoe UI';-inkscape-font-specification:'Segoe UI, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;letter-spacing:-0.393565px;fill:#ffffff;stroke-width:0.567791"
+         x="6.47826"
+         y="11.130032">10</tspan></text>
+  </g>
+</svg>
