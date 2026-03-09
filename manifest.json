@@ -12,9 +12,16 @@
     "128": "icons/128.png"
   },
   "action": {
+    "default_icon": {
+      "16": "icons/16-gray.png",
+      "32": "icons/32-gray.png",
+      "48": "icons/48-gray.png",
+      "64": "icons/64-gray.png",
+      "128": "icons/128-gray.png"
+    },
     "default_title": "クリックでピクチャー イン ピクチャーを開始します"
   },
-  "permissions": ["activeTab", "scripting"],
+  "permissions": ["activeTab", "scripting", "tabs"],
   "web_accessible_resources": [
     {
       "resources": [ "img/*.png" ],
