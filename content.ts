@@ -1,4 +1,36 @@
 (async () => {
+  const MIN_CHROME_VERSION = 116;
+
+  const getChromiumMajorVersion = (): number | null => {
+    const userAgent = navigator.userAgent;
+    const edgeMatch = userAgent.match(/Edg\/(\d+)\./);
+    if (edgeMatch) {
+      return Number.parseInt(edgeMatch[1], 10);
+    }
+
+    const chromeMatch = userAgent.match(/Chrome\/(\d+)\./);
+    if (chromeMatch) {
+      return Number.parseInt(chromeMatch[1], 10);
+    }
+
+    return null;
+  };
+
+  const ensureDocumentPiPSupported = (): boolean => {
+    const majorVersion = getChromiumMajorVersion();
+    const isVersionSupported =
+      majorVersion !== null && majorVersion >= MIN_CHROME_VERSION;
+
+    if (!window.documentPictureInPicture || !isVersionSupported) {
+      alert(
+        `この機能は Chromium ${MIN_CHROME_VERSION} 以降で利用できます。ブラウザを最新版へ更新してください。`
+      );
+      return false;
+    }
+
+    return true;
+  };
+
   const styleSheet = `
   body {
     margin: 0;
@@ -53,7 +85,7 @@
     return;
   }
 
-  if (!window.documentPictureInPicture) {
+  if (!ensureDocumentPiPSupported()) {
     return;
   }
 
