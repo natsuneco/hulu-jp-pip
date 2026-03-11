@@ -2,8 +2,8 @@
   "manifest_version": 3,
   "name": "日本版 hulu ピクチャー イン ピクチャー",
   "short_name": "hulu PiP",
-  "description": "[非公式] 日本版 hulu の動画を、ピクチャー イン ピクチャー (PiP) で視聴できる拡張機能です。",
-  "version": "0.0.1",
+  "description": "日本版 hulu の動画を、ピクチャー イン ピクチャー (PiP) で視聴できる拡張機能です。",
+  "version": "1.0.0",
   "icons": {
     "16": "icons/16.png",
     "32": "icons/32.png",
@@ -21,7 +21,8 @@
     },
     "default_title": "クリックでピクチャー イン ピクチャーを開始します"
   },
-  "permissions": ["activeTab", "scripting", "tabs"],
+  "permissions": ["scripting", "tabs"],
+  "host_permissions": ["https://*.hulu.jp/*"],
   "web_accessible_resources": [
     {
       "resources": [ "img/*.png" ],
