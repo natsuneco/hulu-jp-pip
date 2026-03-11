@@ -1,0 +1,14 @@
+{
+  "extName": {
+    "message": "日本版 hulu ピクチャー イン ピクチャー"
+  },
+  "extShortName": {
+    "message": "hulu PiP"
+  },
+  "extDescription": {
+    "message": "日本版 hulu の動画を、ピクチャー イン ピクチャー (PiP) で視聴できる拡張機能です。"
+  },
+  "actionDefaultTitle": {
+    "message": "クリックでピクチャー イン ピクチャーを開始します"
+  }
+}

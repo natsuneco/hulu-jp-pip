@@ -1,0 +1,14 @@
+{
+  "extName": {
+    "message": "Hulu Japan Picture-in-Picture"
+  },
+  "extShortName": {
+    "message": "hulu PiP"
+  },
+  "extDescription": {
+    "message": "An extension to watch Hulu Japan videos in Picture-in-Picture (PiP)."
+  },
+  "actionDefaultTitle": {
+    "message": "Click to start Picture-in-Picture"
+  }
+}

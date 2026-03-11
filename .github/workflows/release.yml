@@ -1,0 +1,52 @@
+name: Release on tag
+
+on:
+  push:
+    tags:
+      - '*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build TypeScript
+        run: npm run build
+
+      - name: Prepare release package
+        run: |
+          set -e
+          PACKAGE_DIR="hulu-jp-pip"
+          ZIP_NAME="hulu-jp-pip.zip"
+
+          rm -rf "$PACKAGE_DIR" "$ZIP_NAME"
+          mkdir -p "$PACKAGE_DIR"
+
+          cp -r dist "$PACKAGE_DIR/dist"
+          cp -r _locales "$PACKAGE_DIR/_locales"
+          cp manifest.json "$PACKAGE_DIR/manifest.json"
+          cp -r img "$PACKAGE_DIR/img"
+          cp -r icons "$PACKAGE_DIR/icons"
+          cp LICENSE "$PACKAGE_DIR/LICENSE"
+
+          zip -r "$ZIP_NAME" "$PACKAGE_DIR"
+
+      - name: Create GitHub Release and upload asset
+        uses: softprops/action-gh-release@v2
+        with:
+          files: hulu-jp-pip.zip
