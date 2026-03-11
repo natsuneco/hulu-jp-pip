@@ -7,6 +7,12 @@
 PiP ウィンドウは常に他のウィンドウの上に重ねて表示されるので、他のサイトや他のアプリケーションで作業をしながら hulu の動画を視聴できます。
 
 ## 📦 導入方法
+### Zipファイルから
+1. [Releases](https://github.com/natsuneco/hulu-jp-pip/releases) から最新版の `hulu-jp-pip.zip` をダウンロード、展開
+2. Chrome / Edge で拡張機能のページ ([chrome://extensions](chrome://extensions)) を開き、**開発者モード**をオンにする
+3. **展開して読み込み**から展開したフォルダを選択
+
+### ソースコードから
 1. このリポジトリをクローン
 2. 以下のコマンドを実行
    ```sh
