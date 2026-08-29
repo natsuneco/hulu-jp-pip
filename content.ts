@@ -51,6 +51,7 @@
       left: 50%;
       display: none;
       align-items: center;
+      flex-direction: column;
       gap: 20px;
       width: fit-content;
       margin: 0;
@@ -64,6 +65,58 @@
       pointer-events: auto;
       visibility: visible !important;
       opacity: 1 !important;
+    }
+
+    .hulu-pip-progress {
+      appearance: none;
+      width: min(70vw, 480px);
+      height: 20px;
+      margin: 0;
+      background: linear-gradient(
+        to right,
+        rgba(255, 255, 255, 0.9) var(--hulu-pip-progress, 0%),
+        rgba(255, 255, 255, 0.35) var(--hulu-pip-progress, 0%)
+      );
+      border-radius: 999px;
+      cursor: pointer;
+    }
+
+    .hulu-pip-progress::-webkit-slider-runnable-track {
+      height: 5px;
+      background: transparent;
+      border-radius: 999px;
+    }
+
+    .hulu-pip-progress::-webkit-slider-thumb {
+      appearance: none;
+      width: 14px;
+      height: 14px;
+      margin-top: -4.5px;
+      background: white;
+      border: 0;
+      border-radius: 50%;
+    }
+
+    .hulu-pip-progress::-moz-range-track {
+      height: 5px;
+      background: transparent;
+      border-radius: 999px;
+    }
+
+    .hulu-pip-progress::-moz-range-thumb {
+      width: 14px;
+      height: 14px;
+      background: white;
+      border: 0;
+      border-radius: 50%;
+    }
+
+    .hulu-pip-control-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      width: 100%;
     }
 
     .hulu-pip-controls button {
@@ -330,6 +383,47 @@
       volumeValueElem.setAttribute("aria-live", "polite");
       volumeControlElem.append(volumeValueElem);
 
+      const progressElem = pipWindow.document.createElement("input");
+      progressElem.className = "hulu-pip-progress";
+      progressElem.type = "range";
+      progressElem.min = "0";
+      progressElem.max = "1";
+      progressElem.step = "0.1";
+      progressElem.value = String(videoElem.currentTime || 0);
+      progressElem.setAttribute("aria-label", "再生位置");
+
+      const syncProgress = (): void => {
+        const currentVideoElem = getVideoElem();
+        if (!currentVideoElem) return;
+
+        const duration = Number.isFinite(currentVideoElem.duration) && currentVideoElem.duration > 0
+          ? currentVideoElem.duration
+          : 1;
+        const currentTime = Number.isFinite(currentVideoElem.currentTime)
+          ? Math.min(Math.max(currentVideoElem.currentTime, 0), duration)
+          : 0;
+        progressElem.max = String(duration);
+        progressElem.value = String(currentTime);
+        progressElem.style.setProperty(
+          "--hulu-pip-progress",
+          `${(currentTime / duration) * 100}%`,
+        );
+      };
+
+      progressElem.addEventListener("input", (event) => {
+        event.stopPropagation();
+        const currentVideoElem = getVideoElem();
+        const nextTime = Number(progressElem.value);
+        if (!currentVideoElem || !Number.isFinite(nextTime)) return;
+
+        try {
+          currentVideoElem.currentTime = nextTime;
+        } catch {
+          return;
+        }
+        syncProgress();
+      });
+
       volumeElem.addEventListener("input", (event) => {
         event.stopPropagation();
         const currentVideoElem = getVideoElem();
@@ -354,10 +448,19 @@
         volumeValueElem.textContent = `${Math.round(Number(volumeElem.value) * 100)}%`;
       });
 
-      controlsElem.append(replay10ButtonElem);
-      controlsElem.append(playButtonElem);
-      controlsElem.append(forward10ButtonElem);
-      controlsElem.append(volumeControlElem);
+      videoElem.addEventListener("timeupdate", syncProgress);
+      videoElem.addEventListener("durationchange", syncProgress);
+      videoElem.addEventListener("loadedmetadata", syncProgress);
+      syncProgress();
+
+      const controlRowElem = pipWindow.document.createElement("div");
+      controlRowElem.className = "hulu-pip-control-row";
+      controlRowElem.append(replay10ButtonElem);
+      controlRowElem.append(playButtonElem);
+      controlRowElem.append(forward10ButtonElem);
+      controlRowElem.append(volumeControlElem);
+      controlsElem.append(progressElem);
+      controlsElem.append(controlRowElem);
       controlsLayerElem.append(controlsElem);
 
       pipWindow.document.body.append(vjsElem);
