@@ -242,13 +242,21 @@
     let videoElem: HTMLVideoElement | null = null;
     let mountedVjsElem: HTMLElement | null = null;
     let mountedControlsLayerElem: HTMLElement | null = null;
+    let preferredVolume: number | null = null;
 
     const mountPiPContent = () => {
       if (!pipWindow) return false;
 
-      const nextVjsElem = Array.from(
-        document.querySelectorAll("[id^='vjs_video_']"),
-      ).find((element) => element.querySelector("video"));
+      const findVjsElem = (root: ParentNode): Element | undefined =>
+        Array.from(root.querySelectorAll("[id^='vjs_video_']")).find(
+          (element) => element.querySelector("video"),
+        );
+
+      const nextVjsElem =
+        findVjsElem(document) ??
+        (vjsElem && pipWindow.document.body.contains(vjsElem)
+          ? vjsElem
+          : findVjsElem(pipWindow.document));
       if (!nextVjsElem) {
         return false;
       }
@@ -391,7 +399,13 @@
       volumeElem.min = "0";
       volumeElem.max = "1";
       volumeElem.step = "0.01";
-      volumeElem.value = String(videoElem.muted ? 0 : videoElem.volume);
+      if (preferredVolume === null) {
+        preferredVolume = videoElem.muted ? 0 : videoElem.volume;
+      } else {
+        videoElem.volume = preferredVolume;
+        videoElem.muted = preferredVolume === 0;
+      }
+      volumeElem.value = String(preferredVolume);
       volumeElem.title = "音量";
       volumeElem.setAttribute("aria-label", "音量");
 
@@ -476,7 +490,8 @@
         const currentVideoElem = getVideoElem();
         if (!currentVideoElem) return;
 
-        currentVideoElem.volume = Number(volumeElem.value);
+        preferredVolume = Number(volumeElem.value);
+        currentVideoElem.volume = preferredVolume;
         if (currentVideoElem.volume > 0) {
           currentVideoElem.muted = false;
         }
