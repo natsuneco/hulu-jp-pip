@@ -69,46 +69,62 @@
 
     .hulu-pip-progress {
       appearance: none;
-      width: min(70vw, 480px);
+      flex: 1;
+      min-width: 0;
       height: 20px;
       margin: 0;
       background: linear-gradient(
         to right,
         rgba(255, 255, 255, 0.9) var(--hulu-pip-progress, 0%),
         rgba(255, 255, 255, 0.35) var(--hulu-pip-progress, 0%)
-      );
+      ) center / 100% 3px no-repeat;
       border-radius: 999px;
       cursor: pointer;
     }
 
     .hulu-pip-progress::-webkit-slider-runnable-track {
-      height: 5px;
+      height: 3px;
       background: transparent;
       border-radius: 999px;
     }
 
     .hulu-pip-progress::-webkit-slider-thumb {
       appearance: none;
-      width: 14px;
-      height: 14px;
-      margin-top: -4.5px;
+      width: 10px;
+      height: 10px;
+      margin-top: -3.5px;
       background: white;
       border: 0;
       border-radius: 50%;
     }
 
     .hulu-pip-progress::-moz-range-track {
-      height: 5px;
+      height: 3px;
       background: transparent;
       border-radius: 999px;
     }
 
     .hulu-pip-progress::-moz-range-thumb {
-      width: 14px;
-      height: 14px;
+      width: 10px;
+      height: 10px;
       background: white;
       border: 0;
       border-radius: 50%;
+    }
+
+    .hulu-pip-progress-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: min(70vw, 480px);
+    }
+
+    .hulu-pip-time {
+      min-width: 78px;
+      color: white;
+      font-size: .75em;
+      text-align: right;
+      white-space: nowrap;
     }
 
     .hulu-pip-control-row {
@@ -392,6 +408,31 @@
       progressElem.value = String(videoElem.currentTime || 0);
       progressElem.setAttribute("aria-label", "再生位置");
 
+      const progressTimeElem = pipWindow.document.createElement("output");
+      progressTimeElem.className = "hulu-pip-time";
+      progressTimeElem.setAttribute("aria-live", "polite");
+
+      const progressRowElem = pipWindow.document.createElement("div");
+      progressRowElem.className = "hulu-pip-progress-row";
+      progressRowElem.append(progressElem);
+      progressRowElem.append(progressTimeElem);
+
+      const formatTime = (totalSeconds: number): string => {
+        if (!Number.isFinite(totalSeconds) || totalSeconds < 0) {
+          return "--:--";
+        }
+
+        const roundedSeconds = Math.floor(totalSeconds);
+        const hours = Math.floor(roundedSeconds / 3600);
+        const minutes = Math.floor((roundedSeconds % 3600) / 60);
+        const seconds = roundedSeconds % 60;
+        if (hours > 0) {
+          return `${hours}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+        }
+
+        return `${minutes}:${String(seconds).padStart(2, "0")}`;
+      };
+
       const syncProgress = (): void => {
         const currentVideoElem = getVideoElem();
         if (!currentVideoElem) return;
@@ -408,6 +449,7 @@
           "--hulu-pip-progress",
           `${(currentTime / duration) * 100}%`,
         );
+        progressTimeElem.textContent = `${formatTime(currentTime)} / ${formatTime(currentVideoElem.duration)}`;
       };
 
       progressElem.addEventListener("input", (event) => {
@@ -459,7 +501,7 @@
       controlRowElem.append(playButtonElem);
       controlRowElem.append(forward10ButtonElem);
       controlRowElem.append(volumeControlElem);
-      controlsElem.append(progressElem);
+      controlsElem.append(progressRowElem);
       controlsElem.append(controlRowElem);
       controlsLayerElem.append(controlsElem);
 
