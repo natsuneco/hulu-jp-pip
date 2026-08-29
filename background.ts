@@ -21,6 +21,9 @@ const updateIconState = (tabId: number, url?: string): void => {
   chrome.action.setIcon({
     tabId,
     path: isHuluJP(url) ? activeIconPath : inactiveIconPath,
+  }, () => {
+    // The tab may have been closed before the icon update completed.
+    void chrome.runtime.lastError;
   });
 };
 
@@ -40,6 +43,10 @@ chrome.tabs.onUpdated.addListener((tabId, _changeInfo, tab) => {
 
 chrome.tabs.onActivated.addListener(({ tabId }) => {
   chrome.tabs.get(tabId, (tab) => {
+    if (chrome.runtime.lastError) {
+      return;
+    }
+
     updateIconState(tabId, tab.url);
   });
 });
@@ -55,5 +62,8 @@ chrome.action.onClicked.addListener((tab) => {
   chrome.scripting.executeScript({
     target: { tabId: tab.id },
     files: ["dist/content.js"],
+  }, () => {
+    // The active tab may disappear while the script is being injected.
+    void chrome.runtime.lastError;
   });
 });
