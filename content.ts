@@ -213,6 +213,7 @@
     }
 
     let intervalId: number | null = null;
+    let monitorId: number | null = null;
 
     const observer = new MutationObserver((mutations) => {
       if (!mutations.some((m) => m.type === "childList" && m.addedNodes.length > 0)) {
@@ -232,6 +233,7 @@
 
     observer.observe(observTarget, {
       childList: true,
+      subtree: true,
     });
 
     let vjsElem: HTMLElement | null = null;
@@ -239,6 +241,7 @@
     let pElem: HTMLParagraphElement | null = null;
     let videoElem: HTMLVideoElement | null = null;
     let mountedVjsElem: HTMLElement | null = null;
+    let mountedControlsLayerElem: HTMLElement | null = null;
 
     const mountPiPContent = () => {
       if (!pipWindow) return false;
@@ -250,20 +253,20 @@
         return false;
       }
 
+      const candidateVideoElem = nextVjsElem.querySelector("video");
+      if (candidateVideoElem?.tagName !== "VIDEO") {
+        return false;
+      }
+
       if (
         mountedVjsElem === nextVjsElem &&
-        pipWindow.document.body.contains(nextVjsElem)
+        pipWindow.document.body.contains(nextVjsElem) &&
+        videoElem === candidateVideoElem
       ) {
         return true;
       }
 
       vjsElem = nextVjsElem as HTMLElement;
-
-      const candidateVideoElem = vjsElem.querySelector("video");
-      if (candidateVideoElem?.tagName !== "VIDEO") {
-        return false;
-      }
-
       videoElem = candidateVideoElem as HTMLVideoElement;
 
       parentElem = document.querySelector(".video-core-container");
@@ -275,6 +278,8 @@
         pipWindow.document.body.replaceChildren();
       }
 
+      mountedControlsLayerElem?.remove();
+      pElem?.remove();
       pElem = document.createElement("p");
       pElem.textContent = "ピクチャー イン ピクチャーで再生しています";
       pElem.style.margin = "0";
@@ -508,6 +513,7 @@
       pipWindow.document.body.append(vjsElem);
       pipWindow.document.body.append(controlsLayerElem);
       mountedVjsElem = vjsElem;
+      mountedControlsLayerElem = controlsLayerElem;
       pElem.textContent = "ピクチャー イン ピクチャーで再生しています";
       parentElem?.append(pElem);
 
@@ -530,8 +536,17 @@
         clearInterval(intervalId!);
       }
     }, 300);
+    monitorId = setInterval(() => {
+      mountPiPContent();
+    }, 500);
 
     pipWindow.document.addEventListener("visibilitychange", () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+      if (monitorId) {
+        clearInterval(monitorId);
+      }
       pElem?.remove();
       parentElem?.append(vjsElem!);
       observer.disconnect();
