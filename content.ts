@@ -162,6 +162,12 @@
       line-height: 1;
     }
 
+    .hulu-pip-skip-button {
+      color: white;
+      font-size: .8em;
+      white-space: nowrap;
+    }
+
     .hulu-pip-volume {
       appearance: none;
       width: 120px;
@@ -373,10 +379,11 @@
         symbol: string,
         label: string,
         onClick: () => void,
+        className = "hulu-pip-episode-button",
       ): HTMLButtonElement => {
         const buttonElem = pipWindow!.document.createElement("button");
         buttonElem.type = "button";
-        buttonElem.className = "hulu-pip-episode-button";
+        buttonElem.className = className;
         buttonElem.setAttribute("aria-label", label);
         buttonElem.textContent = symbol;
         buttonElem.addEventListener("click", (event) => {
@@ -417,6 +424,29 @@
 
         if (nativeButton && "click" in nativeButton) {
           (nativeButton as Element & { click: () => void }).click();
+        }
+      };
+
+      const clickNativePlayerText = (text: string): void => {
+        const findText = (
+          root: ParentNode | null | undefined,
+          skipCustomControls = false,
+        ): Element | undefined =>
+          Array.from(root?.querySelectorAll("*") ?? []).find((element) => {
+            if (skipCustomControls && element.closest(".hulu-pip-controls")) {
+              return false;
+            }
+
+            return element.textContent?.trim() === text;
+          });
+
+        const nativeControl =
+          findText(document) ??
+          findText(vjsElem) ??
+          findText(pipWindow?.document, true);
+
+        if (nativeControl && "click" in nativeControl) {
+          (nativeControl as Element & { click: () => void }).click();
         }
       };
 
@@ -476,6 +506,12 @@
         "⏭",
         "次の動画",
         () => navigateToEpisode(1, "次の動画"),
+      );
+      const skipToMainButtonElem = createTextButton(
+        "本編へスキップ",
+        "本編へスキップ",
+        () => clickNativePlayerText("本編へスキップ"),
+        "hulu-pip-skip-button",
       );
       const playButtonElem = createIconButton(
         videoElem.paused ? playIconURL : pauseIconURL,
@@ -616,6 +652,7 @@
 
       const controlRowElem = pipWindow.document.createElement("div");
       controlRowElem.className = "hulu-pip-control-row";
+      controlRowElem.append(skipToMainButtonElem);
       controlRowElem.append(previousEpisodeButtonElem);
       controlRowElem.append(replay10ButtonElem);
       controlRowElem.append(playButtonElem);
