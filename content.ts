@@ -445,8 +445,15 @@
           findText(vjsElem) ??
           findText(pipWindow?.document, true);
 
-        if (nativeControl && "click" in nativeControl) {
-          (nativeControl as Element & { click: () => void }).click();
+        if (!nativeControl || !("click" in nativeControl)) {
+          return;
+        }
+
+        const clickableControl =
+          nativeControl.closest("button, [role='button'], [tabindex]") ??
+          nativeControl;
+        if ("click" in clickableControl) {
+          (clickableControl as Element & { click: () => void }).click();
         }
       };
 
@@ -467,7 +474,12 @@
 
         const targetEpisodeCard = episodeCards[currentIndex + direction];
 
-        if (!targetEpisodeCard || !("click" in targetEpisodeCard)) {
+        if (!targetEpisodeCard) {
+          clickNativePlayerButton(fallbackLabel);
+          return;
+        }
+
+        if (!("click" in targetEpisodeCard)) {
           clickNativePlayerButton(fallbackLabel);
           return;
         }
