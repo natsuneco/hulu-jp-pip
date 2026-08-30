@@ -162,12 +162,6 @@
       line-height: 1;
     }
 
-    .hulu-pip-skip-button {
-      color: white;
-      font-size: .8em;
-      white-space: nowrap;
-    }
-
     .hulu-pip-volume {
       appearance: none;
       width: 120px;
@@ -427,36 +421,6 @@
         }
       };
 
-      const clickNativePlayerText = (text: string): void => {
-        const findText = (
-          root: ParentNode | null | undefined,
-          skipCustomControls = false,
-        ): Element | undefined =>
-          Array.from(root?.querySelectorAll("*") ?? []).find((element) => {
-            if (skipCustomControls && element.closest(".hulu-pip-controls")) {
-              return false;
-            }
-
-            return element.textContent?.trim() === text;
-          });
-
-        const nativeControl =
-          findText(document) ??
-          findText(vjsElem) ??
-          findText(pipWindow?.document, true);
-
-        if (!nativeControl || !("click" in nativeControl)) {
-          return;
-        }
-
-        const clickableControl =
-          nativeControl.closest("button, [role='button'], [tabindex]") ??
-          nativeControl;
-        if ("click" in clickableControl) {
-          (clickableControl as Element & { click: () => void }).click();
-        }
-      };
-
       const navigateToEpisode = (direction: -1 | 1, fallbackLabel: string): void => {
         const episodeCards = Array.from(
           document.querySelectorAll(".card.episode-card .sliderRefocus[role='link']"),
@@ -518,12 +482,6 @@
         "⏭",
         "次の動画",
         () => navigateToEpisode(1, "次の動画"),
-      );
-      const skipToMainButtonElem = createTextButton(
-        "本編へスキップ",
-        "本編へスキップ",
-        () => clickNativePlayerText("本編へスキップ"),
-        "hulu-pip-skip-button",
       );
       const playButtonElem = createIconButton(
         videoElem.paused ? playIconURL : pauseIconURL,
@@ -664,7 +622,6 @@
 
       const controlRowElem = pipWindow.document.createElement("div");
       controlRowElem.className = "hulu-pip-control-row";
-      controlRowElem.append(skipToMainButtonElem);
       controlRowElem.append(previousEpisodeButtonElem);
       controlRowElem.append(replay10ButtonElem);
       controlRowElem.append(playButtonElem);
