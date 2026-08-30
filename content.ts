@@ -420,6 +420,33 @@
         }
       };
 
+      const navigateToEpisode = (direction: -1 | 1, fallbackLabel: string): void => {
+        const episodeCards = Array.from(
+          document.querySelectorAll(".card.episode-card .sliderRefocus[role='link']"),
+        );
+        const currentEpisodeCard = document.querySelector(
+          ".card.episode-card.current .sliderRefocus[role='link']",
+        );
+        const currentIndex = currentEpisodeCard
+          ? episodeCards.indexOf(currentEpisodeCard)
+          : -1;
+        const targetEpisodeCard = episodeCards[currentIndex + direction];
+
+        if (!targetEpisodeCard || !("click" in targetEpisodeCard)) {
+          clickNativePlayerButton(fallbackLabel);
+          return;
+        }
+
+        const currentURL = location.href;
+        (targetEpisodeCard as Element & { click: () => void }).click();
+
+        window.setTimeout(() => {
+          if (location.href === currentURL) {
+            clickNativePlayerButton(fallbackLabel);
+          }
+        }, 800);
+      };
+
       const playIconURL = chrome.runtime.getURL("img/play.png");
       const pauseIconURL = chrome.runtime.getURL("img/pause.png");
       const replay10IconURL = chrome.runtime.getURL("img/replay10.png");
@@ -438,12 +465,12 @@
       const previousEpisodeButtonElem = createTextButton(
         "⏮",
         "前の動画",
-        () => clickNativePlayerButton("前の動画"),
+        () => navigateToEpisode(-1, "前の動画"),
       );
       const nextEpisodeButtonElem = createTextButton(
         "⏭",
         "次の動画",
-        () => clickNativePlayerButton("次の動画"),
+        () => navigateToEpisode(1, "次の動画"),
       );
       const playButtonElem = createIconButton(
         videoElem.paused ? playIconURL : pauseIconURL,
