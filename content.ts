@@ -47,7 +47,7 @@
     
     .hulu-pip-controls {
       position: fixed;
-      bottom: 18px;
+      bottom: 8px;
       left: 50%;
       display: none;
       align-items: center;
@@ -154,6 +154,12 @@
 
     .hulu-pip-controls button:hover img {
       opacity: 1;
+    }
+
+    .hulu-pip-episode-button {
+      color: white;
+      font-size: 1.2em;
+      line-height: 1;
     }
 
     .hulu-pip-volume {
@@ -297,7 +303,7 @@
       controlsElem.classList.add("hulu-pip-controls");
       controlsElem.style.setProperty("position", "fixed", "important");
       controlsElem.style.setProperty("left", "50%", "important");
-      controlsElem.style.setProperty("bottom", "18px", "important");
+      controlsElem.style.setProperty("bottom", "8px", "important");
       controlsElem.style.setProperty("z-index", "2147483647", "important");
       controlsElem.style.setProperty("visibility", "visible", "important");
       controlsElem.style.setProperty("opacity", "1", "important");
@@ -363,6 +369,44 @@
         return buttonElem;
       };
 
+      const createTextButton = (
+        symbol: string,
+        label: string,
+        onClick: () => void,
+      ): HTMLButtonElement => {
+        const buttonElem = pipWindow!.document.createElement("button");
+        buttonElem.type = "button";
+        buttonElem.className = "hulu-pip-episode-button";
+        buttonElem.setAttribute("aria-label", label);
+        buttonElem.textContent = symbol;
+        buttonElem.addEventListener("click", (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          onClick();
+        });
+
+        return buttonElem;
+      };
+
+      const clickNativePlayerButton = (label: string): void => {
+        const nativeButton = Array.from(
+          vjsElem?.querySelectorAll("button, [role='button']") ?? [],
+        ).find((button) => {
+          const buttonLabel = [
+            button.getAttribute("aria-label"),
+            button.getAttribute("title"),
+            button.textContent,
+          ]
+            .filter((value): value is string => value !== null)
+            .join(" ");
+          return buttonLabel.includes(label);
+        });
+
+        if (nativeButton instanceof HTMLElement) {
+          nativeButton.click();
+        }
+      };
+
       const playIconURL = chrome.runtime.getURL("img/play.png");
       const pauseIconURL = chrome.runtime.getURL("img/pause.png");
       const replay10IconURL = chrome.runtime.getURL("img/replay10.png");
@@ -377,6 +421,16 @@
         forward10IconURL,
         "１０秒進む",
         () => seekBy(10),
+      );
+      const previousEpisodeButtonElem = createTextButton(
+        "⏮",
+        "前の動画",
+        () => clickNativePlayerButton("前の動画"),
+      );
+      const nextEpisodeButtonElem = createTextButton(
+        "⏭",
+        "次の動画",
+        () => clickNativePlayerButton("次の動画"),
       );
       const playButtonElem = createIconButton(
         videoElem.paused ? playIconURL : pauseIconURL,
@@ -517,9 +571,11 @@
 
       const controlRowElem = pipWindow.document.createElement("div");
       controlRowElem.className = "hulu-pip-control-row";
+      controlRowElem.append(previousEpisodeButtonElem);
       controlRowElem.append(replay10ButtonElem);
       controlRowElem.append(playButtonElem);
       controlRowElem.append(forward10ButtonElem);
+      controlRowElem.append(nextEpisodeButtonElem);
       controlRowElem.append(volumeControlElem);
       controlsElem.append(progressRowElem);
       controlsElem.append(controlRowElem);
