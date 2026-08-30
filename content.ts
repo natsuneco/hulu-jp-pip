@@ -430,6 +430,11 @@
         const currentIndex = currentEpisodeCard
           ? episodeCards.indexOf(currentEpisodeCard)
           : -1;
+        if (currentIndex < 0) {
+          clickNativePlayerButton(fallbackLabel);
+          return;
+        }
+
         const targetEpisodeCard = episodeCards[currentIndex + direction];
 
         if (!targetEpisodeCard || !("click" in targetEpisodeCard)) {
