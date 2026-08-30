@@ -389,21 +389,34 @@
       };
 
       const clickNativePlayerButton = (label: string): void => {
-        const nativeButton = Array.from(
-          vjsElem?.querySelectorAll("button, [role='button']") ?? [],
-        ).find((button) => {
-          const buttonLabel = [
-            button.getAttribute("aria-label"),
-            button.getAttribute("title"),
-            button.textContent,
-          ]
-            .filter((value): value is string => value !== null)
-            .join(" ");
-          return buttonLabel.includes(label);
-        });
+        const findButton = (
+          root: ParentNode | null | undefined,
+          skipCustomControls = false,
+        ): Element | undefined =>
+          Array.from(root?.querySelectorAll("button, [role='button']") ?? []).find(
+            (button) => {
+              if (skipCustomControls && button.closest(".hulu-pip-controls")) {
+                return false;
+              }
 
-        if (nativeButton instanceof HTMLElement) {
-          nativeButton.click();
+              const buttonLabel = [
+                button.getAttribute("aria-label"),
+                button.getAttribute("title"),
+                button.textContent,
+              ]
+                .filter((value): value is string => value !== null)
+                .join(" ");
+              return buttonLabel.includes(label);
+            },
+          );
+
+        const nativeButton =
+          findButton(document) ??
+          findButton(vjsElem) ??
+          findButton(pipWindow?.document, true);
+
+        if (nativeButton && "click" in nativeButton) {
+          (nativeButton as Element & { click: () => void }).click();
         }
       };
 
