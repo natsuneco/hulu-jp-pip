@@ -1,5 +1,6 @@
 (() => {
   const MIN_CHROME_VERSION = 116;
+  const CONTROLS_HIDE_DELAY_MS = 3000;
 
   const getChromiumMajorVersion = (): number | null => {
     const userAgent = navigator.userAgent;
@@ -52,10 +53,13 @@
       display: none;
       align-items: center;
       flex-direction: column;
-      gap: 20px;
-      width: fit-content;
+      gap: 1em;
+      width: calc(100% - 12px);
+      max-width: 460px;
+      box-sizing: border-box;
       margin: 0;
-      padding: .8em 1.5em;
+      padding: .65em 1.2em;
+      font-size: clamp(9px, 2vw, 13px);
       background-color: rgba(10, 10, 10, 0.85);
       border: solid 1px rgba(50, 50, 50, 0.95);
       border-radius: 100dvh;
@@ -71,42 +75,42 @@
       appearance: none;
       flex: 1;
       min-width: 0;
-      height: 20px;
+      height: 1em;
       margin: 0;
       background: linear-gradient(
         to right,
         rgba(255, 255, 255, 0.9) var(--hulu-pip-progress, 0%),
         rgba(255, 255, 255, 0.35) var(--hulu-pip-progress, 0%)
-      ) center / 100% 3px no-repeat;
+      ) center / 100% .1875em no-repeat;
       border-radius: 999px;
       cursor: pointer;
     }
 
     .hulu-pip-progress::-webkit-slider-runnable-track {
-      height: 3px;
+      height: .1875em;
       background: transparent;
       border-radius: 999px;
     }
 
     .hulu-pip-progress::-webkit-slider-thumb {
       appearance: none;
-      width: 10px;
-      height: 10px;
-      margin-top: -3.5px;
+      width: .5em;
+      height: .5em;
+      margin-top: -.1875em;
       background: white;
       border: 0;
       border-radius: 50%;
     }
 
     .hulu-pip-progress::-moz-range-track {
-      height: 3px;
+      height: .1875em;
       background: transparent;
       border-radius: 999px;
     }
 
     .hulu-pip-progress::-moz-range-thumb {
-      width: 10px;
-      height: 10px;
+      width: .5em;
+      height: .5em;
       background: white;
       border: 0;
       border-radius: 50%;
@@ -115,14 +119,16 @@
     .hulu-pip-progress-row {
       display: flex;
       align-items: center;
-      gap: 10px;
-      width: min(70vw, 480px);
+      gap: .5em;
+      width: 100%;
+      max-width: 480px;
+      min-width: 0;
     }
 
     .hulu-pip-time {
-      min-width: 78px;
+      min-width: 4.5em;
       color: white;
-      font-size: .75em;
+      font-size: .7em;
       text-align: right;
       white-space: nowrap;
     }
@@ -131,8 +137,10 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 20px;
+      flex-wrap: wrap;
+      gap: 1em;
       width: 100%;
+      min-width: 0;
     }
 
     .hulu-pip-controls button {
@@ -147,8 +155,8 @@
     }
 
     .hulu-pip-controls img {
-      width: 1.2em;
-      height: 1.2em;
+      width: 1em;
+      height: 1em;
       opacity: 0.8;
     }
 
@@ -158,44 +166,45 @@
 
     .hulu-pip-episode-button {
       color: white;
-      font-size: 1.2em;
+      font-size: 1em;
       line-height: 1;
     }
 
     .hulu-pip-volume {
       appearance: none;
-      width: 120px;
-      height: 20px;
+      width: 6.5em;
+      max-width: 100%;
+      height: 1em;
       margin: 0;
       background: transparent;
       cursor: pointer;
     }
 
     .hulu-pip-volume::-webkit-slider-runnable-track {
-      height: 5px;
+      height: .25em;
       background: rgba(255, 255, 255, 0.55);
       border-radius: 999px;
     }
 
     .hulu-pip-volume::-webkit-slider-thumb {
       appearance: none;
-      width: 16px;
-      height: 16px;
-      margin-top: -5.5px;
+      width: .8em;
+      height: .8em;
+      margin-top: -.275em;
       background: white;
       border: 0;
       border-radius: 50%;
     }
 
     .hulu-pip-volume::-moz-range-track {
-      height: 5px;
+      height: .25em;
       background: rgba(255, 255, 255, 0.55);
       border-radius: 999px;
     }
 
     .hulu-pip-volume::-moz-range-thumb {
-      width: 16px;
-      height: 16px;
+      width: .8em;
+      height: .8em;
       background: white;
       border: 0;
       border-radius: 50%;
@@ -206,7 +215,7 @@
       align-items: center;
       gap: .5em;
       color: white;
-      font-size: .8em;
+      font-size: .75em;
       white-space: nowrap;
     }
     `;
@@ -249,6 +258,8 @@
     let mountedVjsElem: HTMLElement | null = null;
     let mountedControlsLayerElem: HTMLElement | null = null;
     let preferredVolume: number | null = null;
+    let controlsHideTimeoutId: number | null = null;
+    let controlsEventListenersCleanup: (() => void) | null = null;
 
     const mountPiPContent = () => {
       if (!pipWindow) return false;
@@ -308,12 +319,38 @@
       controlsElem.style.setProperty("visibility", "visible", "important");
       controlsElem.style.setProperty("opacity", "1", "important");
 
-      pipWindow.document.body.addEventListener("mouseenter", () => {
-        controlsElem.style.display = "flex";
-      });
-      pipWindow.document.body.addEventListener("mouseleave", () => {
+      controlsEventListenersCleanup?.();
+
+      const hideControls = (): void => {
+        if (controlsHideTimeoutId !== null) {
+          window.clearTimeout(controlsHideTimeoutId);
+          controlsHideTimeoutId = null;
+        }
         controlsElem.style.display = "none";
-      });
+      };
+
+      const showControls = (): void => {
+        controlsElem.style.display = "flex";
+        if (controlsHideTimeoutId !== null) {
+          window.clearTimeout(controlsHideTimeoutId);
+        }
+        controlsHideTimeoutId = window.setTimeout(() => {
+          controlsElem.style.display = "none";
+          controlsHideTimeoutId = null;
+        }, CONTROLS_HIDE_DELAY_MS);
+      };
+
+      const bodyElem = pipWindow.document.body;
+      bodyElem.addEventListener("mouseenter", showControls);
+      bodyElem.addEventListener("mousemove", showControls);
+      bodyElem.addEventListener("mouseleave", hideControls);
+      controlsEventListenersCleanup = () => {
+        bodyElem.removeEventListener("mouseenter", showControls);
+        bodyElem.removeEventListener("mousemove", showControls);
+        bodyElem.removeEventListener("mouseleave", hideControls);
+        hideControls();
+        controlsEventListenersCleanup = null;
+      };
 
       const controlsLayerElem = pipWindow.document.createElement("div");
       controlsLayerElem.style.setProperty("position", "fixed", "important");
@@ -669,6 +706,7 @@
       if (monitorId) {
         clearInterval(monitorId);
       }
+      controlsEventListenersCleanup?.();
       pElem?.remove();
       parentElem?.append(vjsElem!);
       observer.disconnect();
