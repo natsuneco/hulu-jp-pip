@@ -54,8 +54,8 @@
       align-items: center;
       flex-direction: column;
       gap: 1em;
-      width: calc(100% - 12px);
-      max-width: 460px;
+      width: min(60%, 460px);
+      max-width: calc(100% - 12px);
       box-sizing: border-box;
       margin: 0;
       padding: .65em 1.2em;
